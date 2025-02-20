@@ -54,15 +54,29 @@ for year in years:
             break  # break as soon as a course is encountered, no need to count all
 
 long = df.melt(id_vars=["Course name", "Study period"], var_name="Grade")
-long_filer = long.loc[long["Course name"].isin(courses) &
+long_filter = long.loc[long["Course name"].isin(courses) &
          long["Study period"].isin(years) &
          long["Grade"].isin(["Excellent","Very Good", "Good", "Pass"]),]
 
-chart = alt.Chart(long_filer).mark_bar().encode(
+
+long_filter["Grade"] = pd.Categorical(long_filter["Grade"], categories=["Excellent", "Very Good", "Good", "Pass"],
+                                      ordered=True)
+grade_order = {
+    "Pass":0,
+    "Good":1,
+    "Very Good":2,
+    "Excellent":3
+}
+
+long_filter["grade_order"] = long_filter["Grade"].map(grade_order)
+
+chart = alt.Chart(long_filter).mark_bar().encode(
     x=alt.X('Course name:N', title='Course'),  # Grouping by Year
     y=alt.Y('value:Q', title='Percent', stack='zero'),  # Stacked values
-    color=alt.Color('Grade:N', title='Grade', scale=alt.Scale(scheme='set1')),  # Different colors for Pass/Fail
-    column=alt.Column('Study period:Q', title='Year'),  # Grouping by Course
+    color=alt.Color('Grade:N', title='Grade', scale=alt.Scale(scheme='set1'),
+                    sort=["Excellent", "Very Good", "Good", "Pass"]),
+    order=alt.Order("grade_order:Q", sort="ascending"),# Different colors for Grades
+    column=alt.Column('Study period:Q', title='Year')# Grouping by Course
 ).properties(width=1100/max(existing_years,1))
 
 
