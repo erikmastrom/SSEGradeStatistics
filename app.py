@@ -18,9 +18,6 @@ df["Study period"] = df["Study period"].astype(str)
 st.write("""## Grade Statistics
 ### Select course and year(s)""")
 column=st.columns(3)
-column[0].write("left")
-column[1].write("middle")
-column[2].write("right")
 
 with column[1]:
     course = st.selectbox(
@@ -84,7 +81,6 @@ col3.write("here")
 # Add multiple courses (bars) per year to SBC
 # Add ability to add/view multiple SBCs
 # Search for course in ALL FIELDS
-
 
 ##
 
