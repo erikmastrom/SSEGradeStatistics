@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-import openpyxl
-import matplotlib.pyplot as plt
 import numpy as np
 
 ##
@@ -87,11 +85,6 @@ col3.write("here")
 # Add ability to add/view multiple SBCs
 # Search for course in ALL FIELDS
 
-##
-
-
-##
-#long.to_excel("long_df.xlsx")
 
 ##
 
