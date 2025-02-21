@@ -19,7 +19,6 @@ column=st.columns(3)
 with column[1]:
 
     st.write("""# Grade Statistics""")
-    st.write("""### Select course(s) and year(s)""")
 
 
    # course = st.selectbox(
@@ -31,6 +30,7 @@ with column[1]:
    #     st.error("Please select at least one course.")
 
 with st.sidebar:
+    st.write("""### Select course(s) and year(s)""")
     pack = st.multiselect(
             "Choose period or course type", ["Semester 1", "Electives"]
     )
@@ -64,9 +64,10 @@ with st.sidebar:
 
     st.write("""\n""")
 
-col1, col2, col3 = st.columns([1, 2.5, 1])
+col1, col2, col3 = st.columns([1, 10, 1])
 with col2:
-    st.write(df.loc[(df["Course name"].isin(courses)) & df["Study period"].isin(years)].set_index("Course name"))
+    st.dataframe(df.loc[(df["Course name"].isin(courses)) & df["Study period"].isin(years)].set_index("Course name"),
+        width=1000)
 
 
 ##
