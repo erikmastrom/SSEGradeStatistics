@@ -81,7 +81,7 @@ def chart(data):
         column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold",
                                                                     labelAngle=label_angle, labelAlign=label_align)),
         # Grouping by Course
-        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=950 / max(num_courses, 1))
+        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=700 / max(num_courses, 1))
 
     return chart
 
@@ -306,7 +306,7 @@ with st.sidebar:
     if subjects and not pre_select:
         flag = "thesis"
 
-col1, col2, col3 = st.columns([1, 10, 1])
+col1, col2, col3 = st.columns([1, 40, 1])
 df_table = grades.drop(["Course name", "Study period", "Course no."], axis=1).rename(
     columns={"year": "Year", "No of registered students": "No. Students", "period": "Period",
              "full_name": "Course name"}).copy()
@@ -320,12 +320,12 @@ if flag != "thesis":
                 st.dataframe(
                     df_table.loc[(df_table["Course name"].isin(courses)) & df_table["Year"].isin(years)].set_index(
                         "Course name"),
-                    width=1000)
+                    width=3000)
             else:
                 st.dataframe(
                     df_table.loc[(df_table["Course name"].isin(courses)) & df_table["Year"].isin(years) &
                                  df_table["Period"].isin(periods)].set_index("Course name"),
-                    width=1000)
+                    width=3000)
 
             st.markdown("# ")
     except:
@@ -336,7 +336,7 @@ if flag != "thesis":
 
 # scale=alt.Scale(scheme='set1')
 col1, col2, col3 = st.columns([1, 40, 1])
-st.write(flag)
+
 try:
     with col2:
 
