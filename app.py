@@ -81,7 +81,7 @@ def chart(data):
         column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold",
                                                                     labelAngle=label_angle, labelAlign=label_align)),
         # Grouping by Course
-        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=700 / max(num_courses, 1))
+        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=500 / max(num_courses, 1))
 
     return chart
 
@@ -306,7 +306,7 @@ with st.sidebar:
     if subjects and not pre_select:
         flag = "thesis"
 
-col1, col2, col3 = st.columns([1, 40, 1])
+col1, col2, col3 = st.columns([1, 100, 1])
 df_table = grades.drop(["Course name", "Study period", "Course no."], axis=1).rename(
     columns={"year": "Year", "No of registered students": "No. Students", "period": "Period",
              "full_name": "Course name"}).copy()
