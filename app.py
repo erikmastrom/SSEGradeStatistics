@@ -78,10 +78,10 @@ def chart(data):
                                         range=["#cc0000", "#ff8e8e", "#8edeff", "#d68eff"]),
                         sort=["Excellent", "Very Good", "Good", "Pass"]),
         order=alt.Order("grade_order:Q", sort="ascending"),  # Different colors for Grades
-        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold",
+        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=10, labelFontWeight="bold",
                                                                     labelAngle=label_angle, labelAlign=label_align)),
         # Grouping by Course
-        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=500 / max(num_courses, 1))
+        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=600 / max(num_courses, 1))
 
     return chart
 
