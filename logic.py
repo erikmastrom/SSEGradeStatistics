@@ -112,10 +112,9 @@ def course_select(courses, grades, years):
 def thesis(subjects, grades, years):
     num_courses = len(subjects)
 
-    st.write("## Thesis Statistics")
+    st.markdown("### Thesis Statistics")
 
-    col1, col2, col3 = st.columns([1, 10, 1])
-
+    col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
         table(grades, subjects, years)
 
@@ -127,6 +126,7 @@ def thesis(subjects, grades, years):
         chart(long_df(subjects, grades, years, periods=["P3"]),num_courses)
 
     line_chart(subjects, grades, years)
+    st.error("Note: Both fall and spring statistics are shown for each course. This graph therefore has some artifacts.")
 
 
 def table(grades, courses, years, filter = None):
@@ -147,3 +147,5 @@ def table(grades, courses, years, filter = None):
                 df_table.loc[(df_table["Course name"].isin(courses)) & df_table["Year"].isin(years) &
                              df_table["Period"].isin(periods)].set_index("Course name"),
                 width=2000)
+        st.markdown(" ")
+        st.markdown(" ")

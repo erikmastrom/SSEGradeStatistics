@@ -28,3 +28,7 @@ def selectable_courses(course_sets, unique_courses):
 
 def clear_spec():
     st.session_state.pre_select = None
+
+def clear_thesis():
+    st.session_state.thesis = []
+    st.session_state.level = None

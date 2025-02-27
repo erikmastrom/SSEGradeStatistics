@@ -5,7 +5,7 @@ import numpy as np
 import openpyxl
 from chart_data import chart, long_df
 from logic import first_year, thesis, specialization, course_select, table, filter_select
-from cache_and_update_functions import update_cache, update_prefill, clear_spec, selectable_courses
+from cache_and_update_functions import update_cache, update_prefill, clear_spec, selectable_courses, clear_thesis
 
 ##
 st.set_page_config(layout="wide")
@@ -92,9 +92,13 @@ if "thesis" not in st.session_state:
 if "flag" not in st.session_state:
     st.session_state.flag = None
 
+if "level" not in st.session_state:
+    st.session_state.level = None
 
 
 
+#def freeze_courses():
+#    st.write(st.session_state.courses)
 
 
 
@@ -122,7 +126,7 @@ with st.sidebar:
         "Period", ["Period 1", "Period 2", "Period 3", "Period 4"],
         placeholder="Choose periods", label_visibility="collapsed", key="filter",
         on_change=update_cache, args=(course_sets, unique_courses),
-        disabled=(True if st.session_state.pre_select else False))
+        disabled=(True if st.session_state.pre_select or st.session_state.level else False))
 
     if st.session_state.courses != update_prefill(st.session_state.courses, course_sets, unique_courses):
         st.session_state.courses = update_prefill(st.session_state.courses, course_sets, unique_courses)
@@ -140,9 +144,9 @@ with st.sidebar:
                              placeholder="Select courses",
                              label_visibility="collapsed",
                              key="courses",
-                             disabled=(True if st.session_state.pre_select else False))
+                             disabled=(True if st.session_state.pre_select or st.session_state.level else False))
 
-    if not courses and not (st.session_state.pre_select or st.session_state.thesis):
+    if not courses and not (st.session_state.pre_select or st.session_state.level):
         st.error("Select at least one course")
 
     # SPECIALIZATION AND MANDATORY COURSES
@@ -153,8 +157,8 @@ with st.sidebar:
         index=None,
         placeholder="Year or Specialization",
         label_visibility="collapsed",
-        key="pre_select"
-    )
+        key="pre_select",
+        disabled=True if st.session_state.level else False) #on_change=freeze_courses)
 
     match pre_select:
         case "First Year":
@@ -162,8 +166,7 @@ with st.sidebar:
             st.session_state.flag = "first_year"
         case "Specializations":
             specs = st.multiselect(
-                "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"]
-            )
+                "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"])
             st.button("Clear specialization", on_click=clear_spec)
 
             if not specs:
@@ -174,14 +177,19 @@ with st.sidebar:
     # THESIS
     st.write("## Statistics for BSc/MSc Thesis")
     level = st.selectbox("BSc or MSc", ("Bachelor", "Master"), index=None, placeholder="BSc or MSc",
-                         label_visibility="collapsed", disabled=(True if pre_select else False))
+                         label_visibility="collapsed",
+                         disabled=(True if pre_select else False), key="level")
     match level:
         case "Bachelor":
             subjects = st.multiselect("Select subject:", bsc_thesis, placeholder="Select subject",
                                       key="thesis")
+            st.button("Clear", on_click=clear_thesis)
         case "Master":
             subjects = st.multiselect("Select subject:", msc_thesis, placeholder="Select subject",
                                       key="thesis")
+            st.button("Clear", on_click=clear_thesis)
+        case _:
+            st.session_state.thesis = []
     if st.session_state.thesis:
         st.session_state.flag = "thesis"
 

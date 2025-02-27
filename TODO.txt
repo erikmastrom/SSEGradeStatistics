@@ -1,8 +1,10 @@
 TODO:
 
-# Select course packages (1st year, 1st period etc., specialization)
+# Select course packages for 2nd year
 # Add %failed bar to stacked 100% bar chart (SBC) OPTION
 # Add flags to hide/display fields
 # build function that creates a multiselect for each period-filter selected
+* Fix Line chart for courses existing in multiple periods
+* FIX Courses field clear when pre_select ONLY when field has value
 
 # Add ability to add/view multiple SBCs
