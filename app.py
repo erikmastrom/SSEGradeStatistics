@@ -66,7 +66,7 @@ if "filter" not in st.session_state:
 if "pre_select" not in st.session_state:
     st.session_state.pre_select =  None
 
-def chart(data):
+def chart(data, passfail):
     global num_courses
     label_angle = (0 if (num_courses <= 6) else -90)
     label_align = ("center" if (num_courses <= 6) else "right")
@@ -78,23 +78,36 @@ def chart(data):
                                         range=["#cc0000", "#ff8e8e", "#8edeff", "#d68eff"]),
                         sort=["Excellent", "Very Good", "Good", "Pass"]),
         order=alt.Order("grade_order:Q", sort="ascending"),  # Different colors for Grades
-        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold",
-                                                                    labelAngle=label_angle, labelAlign=label_align)),
+        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13,
+                                                                    labelAngle=label_angle, labelAlign=label_align,
+                                                                    labelColor="black")),
         # Grouping by Course
         tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=600 / max(num_courses, 1))
 
-    return chart
+    if passfail:
+        st.markdown("***One or more selected courses seem to be Pass/Fail. Their grade statistics are shown as 0.***")
+    st.altair_chart(chart)
+
+    return
 
 
 def long_df(crs, periods=None):
     global years
-    temp = grades.copy()
+    temp = grades.loc[grades["full_name"].isin(crs)].copy()
     if periods is not None:
         temp = temp.loc[grades["period"].isin(periods),]
 
+    # Check if any course's grades only contains zeroes (= pass/fail)
+    for name in set(temp["Course name"]):
+        grade_set = set(temp.loc[temp["Course name"] == name, ["Excellent", "Very Good", "Good", "Pass"]].values[0])
+        if grade_set == {0.0}:
+            passfail = True
+            break
+        else:
+            passfail = False
+
     long = temp.melt(id_vars=["full_name", "year"], var_name="Grade")
-    long_filter = long.loc[long["full_name"].isin(crs) &
-                           long["year"].isin(years) &
+    long_filter = long.loc[long["year"].isin(years) &
                            long["Grade"].isin(["Excellent", "Very Good", "Good", "Pass"]),]
 
     long_filter = long_filter.rename(
@@ -109,7 +122,7 @@ def long_df(crs, periods=None):
 
     long_filter["grade_order"] = long_filter["Grade"].map(grade_order)
 
-    return long_filter
+    return long_filter, passfail
 
 
 def thesis(subjects):
@@ -171,27 +184,16 @@ def clear_spec():
 
 ##
 
-column = st.columns(3)
-
-with column[1]:
-    st.write("""# Grade Statistics""")
-    st.markdown('*Note: If graph shows 0, the course is likely pass/fail*')
-    st.markdown("###")
-
-# course = st.selectbox(
-#     "Choose course:", options=(list(dict.fromkeys(list(df.iloc[:,0])))),
-#     placeholder='Economics I: Microeconomics'
-# )
-
-# if not course:
-#     st.error("Please select at least one course.")
+#column = st.columns(3)
+#with column 1
 
 with st.sidebar:
     st.write("""# Select years""")
 
     years = st.multiselect(
         "Select years:", unique_years,
-        ["2022", "2023", "2024"]
+        ["2022", "2023", "2024"],
+        label_visibility="collapsed"
     )
     if not years:
         st.error("Select at least one year.")
@@ -343,31 +345,31 @@ try:
         match flag:
             case "Y1":
                 st.write("## First Period")
-                st.altair_chart(chart(long_df(course_dict["Y1"]["P1"])))
+                chart(*long_df(course_dict["Y1"]["P1"]))
                 st.write("## Second Period")
-                st.altair_chart(chart(long_df(course_dict["Y1"]["P2"])))
+                chart(*long_df(course_dict["Y1"]["P2"]))
                 st.write("## Third Period")
-                st.altair_chart(chart(long_df(course_dict["Y1"]["P3"])))
+                chart(*long_df(course_dict["Y1"]["P3"]))
                 st.write("## Fourth Period")
-                st.altair_chart(chart(long_df(course_dict["Y1"]["P4"])))
+                chart(*long_df(course_dict["Y1"]["P4"]))
 
             case "spec":
                 if "Economics" in specs:
                     st.write(
                         """Note: The second course in the economics specialization - The Economic Approach to Policy Design - is new, starting in 2025. Thus, there are no statistics for this course.""")
                 st.write("## First Period")
-                st.altair_chart(chart(long_df(period1)))
+                chart(*long_df(period1))
                 st.write("## Second Period")
-                st.altair_chart(chart(long_df(period2)))
+                chart(*long_df(period2))
 
             case "filter":
-                st.altair_chart(chart(long_df(courses, periods)))
+                chart(*long_df(courses, periods))
 
             case "thesis":
                 thesis(subjects)
 
             case _:
-                st.altair_chart(chart(long_df(courses)))
+                chart(*long_df(courses))
 
 
 
