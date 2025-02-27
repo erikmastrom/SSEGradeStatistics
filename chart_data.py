@@ -10,7 +10,7 @@ global flag
 global grades
 
 
-def chart(data, passfail, num_courses):
+def chart(data, num_courses):
     label_angle = (0 if (num_courses <= 6) else -90)
     label_align = ("center" if (num_courses <= 6) else "right")
     chart = alt.Chart(data).mark_bar().encode(
@@ -27,25 +27,28 @@ def chart(data, passfail, num_courses):
         # Grouping by Course
         tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=600 / max(num_courses, 1))
 
-    if passfail:
-        st.markdown("***One or more selected courses seem to be Pass/Fail. Their grade statistics are shown as 0.***")
     st.altair_chart(chart)
 
     return
 
 
 def long_df(crs, grades, years, periods=None):
-    passfail = False
+
     temp = grades.loc[grades["full_name"].isin(crs)].copy()
     if periods is not None:
         temp = temp.loc[grades["period"].isin(periods),]
 
     # Check if any course's grades only contains zeroes (= pass/fail)
-    for name in set(temp["Course name"]):
-        grade_set = set(temp.loc[temp["Course name"] == name, ["Excellent", "Very Good", "Good", "Pass"]].values[0])
+    for name in set(temp["full_name"]):
+        grade_set = set(temp.loc[temp["full_name"] == name, ["Excellent", "Very Good", "Good", "Pass"]].values[0])
         if grade_set == {0.0}:
-            passfail = True
+            st.markdown(
+                "***One or more selected courses seem to be Pass/Fail. Their grade statistics are shown as 0.***")
             break
+        if len(set(temp.loc[temp["full_name"] == name]["period"].tolist())) > 1:
+            st.error("Courses that exist in multiple periods are selected.\
+                    Their grade statistics will be added up and total 200. Filter courses by periods to avoid this.")
+
 
     long = temp.melt(id_vars=["full_name", "year"], var_name="Grade")
     long_filter = long.loc[long["year"].isin(years) &
@@ -63,7 +66,7 @@ def long_df(crs, grades, years, periods=None):
 
     long_filter["grade_order"] = long_filter["Grade"].map(grade_order)
 
-    return long_filter, passfail
+    return long_filter
 
 
 def line_chart(courses, grades, years):

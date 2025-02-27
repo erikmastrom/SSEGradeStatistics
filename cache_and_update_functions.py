@@ -17,13 +17,11 @@ def update_prefill(courses, course_sets, unique_courses):
 
 def selectable_courses(course_sets, unique_courses):
     if st.session_state.filter:
-        st.write("in function")
         selectable = []
         for i in st.session_state.filter:
             selectable.extend(course_sets[i])
     else:
         selectable = unique_courses
-        st.write("no filter")
 
     return selectable
 

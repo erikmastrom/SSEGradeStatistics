@@ -29,13 +29,13 @@ def first_year(grades, years, course_dict):
     col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
         st.write("## First Period")
-        chart(*long_df(course_dict["Y1"]["P1"], grades, years), num_courses)
+        chart(long_df(course_dict["Y1"]["P1"], grades, years), num_courses)
         st.write("## Second Period")
-        chart(*long_df(course_dict["Y1"]["P2"], grades, years), num_courses)
+        chart(long_df(course_dict["Y1"]["P2"], grades, years), num_courses)
         st.write("## Third Period")
-        chart(*long_df(course_dict["Y1"]["P3"], grades, years), num_courses)
+        chart(long_df(course_dict["Y1"]["P3"], grades, years), num_courses)
         st.write("## Fourth Period")
-        chart(*long_df(course_dict["Y1"]["P4"], grades, years), num_courses)
+        chart(long_df(course_dict["Y1"]["P4"], grades, years), num_courses)
 
     line_chart(mandatory_courses, grades, years)
 
@@ -65,9 +65,9 @@ def specialization(grades, years, course_dict, specs):
                     - The Economic Approach to Policy Design - is new, starting in 2025. \
                     Thus, there are no statistics for this course.")
             st.write("## First Period")
-            chart(*long_df(period1, grades, years),num_courses)
+            chart(long_df(period1, grades, years), num_courses)
             st.write("## Second Period")
-            chart(*long_df(period2, grades, years),num_courses)
+            chart(long_df(period2, grades, years), num_courses)
 
             line_chart(courses, grades, years)
 
@@ -89,7 +89,7 @@ def filter_select(courses, grades, years):
 
     col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
-        chart(*long_df(courses, grades, years, periods=periods),num_courses)
+        chart(long_df(courses, grades, years, periods=periods),num_courses)
 
     line_chart(courses, grades, years)
 
@@ -104,7 +104,7 @@ def course_select(courses, grades, years):
 
     col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
-        chart(*long_df(courses, grades, years),num_courses)
+        chart(long_df(courses, grades, years),num_courses)
 
     line_chart(courses, grades, years)
 
@@ -115,23 +115,16 @@ def thesis(subjects, grades, years):
     st.write("## Thesis Statistics")
 
     col1, col2, col3 = st.columns([1, 10, 1])
-    df_table = grades.drop(["Course name", "Study period", "Course no."], axis=1).rename(
-        columns={"year": "Year", "No of registered students": "No. Students", "period": "Period",
-                 "full_name": "Course name"}).copy()
-    df_table = df_table[["Course name", "Year", "Period", "No. Students", "Main exam", 'At present', 'Excellent',
-                         'Very Good', 'Good', 'Pass']]
+
     with col2:
-        st.dataframe(
-            df_table.loc[(df_table["Course name"].isin(courses)) & df_table["Year"].isin(years)].set_index(
-                "Course name"),
-            width=1000)
+        table(grades, subjects, years)
 
     col1, col2, col3 = st.columns([1, 100, 1])
     with col2:
         st.write("### Fall")
-        st.altair_chart(chart(*long_df(subjects, grades, years, periods=["P1"]),num_courses))
+        chart(long_df(subjects, grades, years, periods=["P1"]),num_courses)
         st.write("### Spring")
-        st.altair_chart(chart(*long_df(subjects, grades, years, periods=["P3"]),num_courses))
+        chart(long_df(subjects, grades, years, periods=["P3"]),num_courses)
 
     line_chart(subjects, grades, years)
 
