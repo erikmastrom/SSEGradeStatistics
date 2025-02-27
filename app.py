@@ -81,7 +81,7 @@ def chart(data):
         column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13, labelFontWeight="bold",
                                                                     labelAngle=label_angle, labelAlign=label_align)),
         # Grouping by Course
-        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=750 / max(num_courses, 1))
+        tooltip=['Course:N', 'Grade:N', "Percent:Q"]).properties(width=600 / max(num_courses, 1))
 
     return chart
 
@@ -132,7 +132,7 @@ def thesis(subjects):
                 "Course name"),
             width=1000)
 
-    col1, col2, col3 = st.columns([1, 40, 1])
+    col1, col2, col3 = st.columns([1, 100, 1])
     with col2:
         st.write("### Fall")
         st.altair_chart(chart(long_df(subjects, ["P1"])))
