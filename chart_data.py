@@ -11,8 +11,8 @@ global grades
 
 
 def chart(data, num_courses):
-    label_angle = (0 if (num_courses <= 6) else -90)
-    label_align = ("center" if (num_courses <= 6) else "right")
+    label_angle = (0 if (num_courses <= 4) else -90)
+    label_align = ("center" if (num_courses <= 4) else "right")
     chart = alt.Chart(data).mark_bar().encode(
         x=alt.X('Year:N', title='Year'),  # Grouping by Year
         y=alt.Y('Percent:Q', title='Percent', stack='zero'),  # Stacked values
@@ -21,7 +21,7 @@ def chart(data, num_courses):
                                         range=["#cc0000", "#ff8e8e", "#8edeff", "#d68eff"]),
                         sort=["Excellent", "Very Good", "Good", "Pass"]),
         order=alt.Order("grade_order:Q", sort="ascending"),  # Different colors for Grades
-        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=13,
+        column=alt.Column('Course:N', title=None, header=alt.Header(labelFontSize=12,
                                                                     labelAngle=label_angle, labelAlign=label_align,
                                                                     labelColor="black")),
         # Grouping by Course
@@ -42,12 +42,14 @@ def long_df(crs, grades, years, periods=None):
     for name in set(temp["full_name"]):
         grade_set = set(temp.loc[temp["full_name"] == name, ["Excellent", "Very Good", "Good", "Pass"]].values[0])
         if grade_set == {0.0}:
-            st.markdown(
-                "***One or more selected courses seem to be Pass/Fail. Their grade statistics are shown as 0.***")
+            st.error(
+                "One or more selected courses seem to be Pass/Fail. Their grade statistics are shown as 0.")
             break
         if len(set(temp.loc[temp["full_name"] == name]["period"].tolist())) > 1:
             st.error("Courses that exist in multiple periods are selected.\
-                    Their grade statistics will be added up and total 200. Filter courses by periods to avoid this.")
+                    Each affected course is split to two different courses, \
+                     with the course's period as an affix (eg. 'P1'). Filter courses by periods to avoid this.")
+            temp.loc[temp["full_name"] == name, "full_name"] = temp["full_name"] + " " + temp["period"]
 
 
     long = temp.melt(id_vars=["full_name", "year"], var_name="Grade")
