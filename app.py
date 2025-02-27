@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-import numpy as np
 import openpyxl
 from chart_data import chart, long_df
 from logic import first_year, thesis, specialization, course_select, table, filter_select
@@ -199,18 +198,3 @@ match st.session_state.flag:
 
 
 ##
-
-# REQS - TODO:
-
-# Select course packages (1st year, 1st period etc., specialization)
-# Add %failed bar to stacked 100% bar chart (SBC) OPTION
-# Add flags to hide/display fields
-# build function that creates a multiselect for each period-filter selected
-
-# Add ability to add/view multiple SBCs
-
-
-# DONE
-# Search for course in ALL FIELDS
-# Add multiple courses (bars) per year to SBC
-# Spreadsheet view: Select courses to display
