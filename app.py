@@ -10,19 +10,6 @@ from cache_and_update_functions import update_cache, update_prefill, clear_spec,
 ##
 st.set_page_config(layout="wide")
 
-global clear_spec
-global course_dict
-global num_courses
-global years
-global grades
-global courses
-global periods
-global period_abbreviation
-#global unique_courses
-global course_sets
-global filter
-
-
 ##
 grades = pd.read_excel("sse_grade_stats_data.xlsx", sheet_name="Cleaned Data")
 grades["year"] = grades["year"].astype(str)
@@ -46,8 +33,6 @@ course_sets = {"Period 1": first_period,
                "Period 3": third_period,
                "Period 4": fourth_period}
 
-
-
 ##
 course_dict = {
     "Y1": {"P1": ["BE501 Economics I: Microeconomics", "BE601 Data Analytics I", "BE801 Global Challenges I"],
@@ -55,6 +40,7 @@ course_dict = {
                   "BE671 Business Law I"],
            "P3": ["BE602 Data Analytics II", "BE201 Marketing", "BE671 Business Law II"],
            "P4": ["BE701 Innovation", "BE401 Finance I", "BE502 Economics II: Macroeconomics"]},
+
     "Spec": {"Accounting": ["BE352 Financial Reporting and Financial Markets",
                             "BE353 Performance Measurement and Business Control"],
              "Finance": ["BE452 Investment Management", "BE453 Corporate Finance and Value Creation"],
@@ -64,16 +50,16 @@ course_dict = {
 }
 
 bsc_thesis = ["BE351 Degree Project in Accounting & Financial Mgmt",
-                                       "BE551 Degree Project in Economics",
-                                       "BE451 Degree Project in Finance",
-                                       "BE151 Degree Project in Management",
-                                       "BE251 Degree Project in Marketing"]
+              "BE551 Degree Project in Economics",
+              "BE451 Degree Project in Finance",
+              "BE151 Degree Project in Management",
+              "BE251 Degree Project in Marketing"]
 
 msc_thesis = ["3350 Thesis in Accounting and Financial Management",
-                                                          "5350 Thesis in Economics",
-                                                          "4350 Thesis in Finance",
-                                                          "1351 Thesis in Business & Management",
-                                                          "6181 MIB Research Project"]
+              "5350 Thesis in Economics",
+              "4350 Thesis in Finance",
+              "1351 Thesis in Business & Management",
+              "6181 MIB Research Project"]
 
 ##
 if "courses" not in st.session_state:
@@ -96,20 +82,10 @@ if "level" not in st.session_state:
     st.session_state.level = None
 
 
-
-#def freeze_courses():
-#    st.write(st.session_state.courses)
-
-
-
-
 ##
 
-#column = st.columns(3)
-#with column 1
-
 with st.sidebar:
-    st.write("# Select years")
+    st.write("## Select years")
 
     years = st.multiselect(
         "Select years:", unique_years,
@@ -119,27 +95,22 @@ with st.sidebar:
     if not years:
         st.error("Select at least one year.")
 
-    #FILTER
-    st.write("# Filter courses by period")
-
+    # FILTER
+    st.write("## Filter courses by period")
     filter = st.multiselect(
         "Period", ["Period 1", "Period 2", "Period 3", "Period 4"],
         placeholder="Choose periods", label_visibility="collapsed", key="filter",
         on_change=update_cache, args=(course_sets, unique_courses),
         disabled=(True if st.session_state.pre_select or st.session_state.level else False))
 
-    if st.session_state.courses != update_prefill(st.session_state.courses, course_sets, unique_courses):
-        st.session_state.courses = update_prefill(st.session_state.courses, course_sets, unique_courses)
-
     if filter and not (st.session_state.pre_select or st.session_state.thesis):
         st.session_state.flag = "filter"
-        selectables = selectable_courses(course_sets, unique_courses)
     else:
         st.session_state.flag = None
-        selectables = unique_courses
 
+    selectables = selectable_courses(course_sets, unique_courses)
 
-    st.write("# Select courses")
+    st.write("## Select courses")
     courses = st.multiselect("Choose courses:", selectables,
                              placeholder="Select courses",
                              label_visibility="collapsed",
@@ -150,7 +121,7 @@ with st.sidebar:
         st.error("Select at least one course")
 
     # SPECIALIZATION AND MANDATORY COURSES
-    st.write("## Select a year or specialization to automatically fill in the courses")
+    st.write("### Select a year or specialization to automatically fill in the courses")
     pre_select = st.selectbox(
         "Select a year or specialization to automatically fill in the courses",
         ("First Year", "Specializations"),
@@ -158,7 +129,7 @@ with st.sidebar:
         placeholder="Year or Specialization",
         label_visibility="collapsed",
         key="pre_select",
-        disabled=True if st.session_state.level else False) #on_change=freeze_courses)
+        disabled=True if st.session_state.level else False)  # ,on_change=freeze_courses
 
     match pre_select:
         case "First Year":
@@ -195,7 +166,7 @@ with st.sidebar:
 
 match st.session_state.flag:
     case "filter":
-       filter_select(courses, grades, years)
+        filter_select(courses, grades, years)
     case "first_year":
         first_year(grades, years, course_dict)
     case "specialization":
@@ -204,6 +175,5 @@ match st.session_state.flag:
         thesis(subjects, grades, years)
     case _:
         course_select(courses, grades, years)
-
 
 ##
