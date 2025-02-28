@@ -100,15 +100,15 @@ def filter_select(courses, grades, years):
     periods = [period_abbreviation["{}".format(p)] for p in st.session_state.filter]
     num_courses = len(courses)
 
-    if (st.session_state.pre_select or st.session_state.thesis):
-        periods = None
-        return
+   # if (st.session_state.pre_select or st.session_state.thesis):
+        #periods = None
+   #     return
 
     table(grades,courses, years,None)
 
     col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
-        chart(long_df(courses, grades, years, periods=periods),num_courses)
+        chart(long_df(courses, grades, years, periods=periods), num_courses)
 
     line_chart(courses, grades, years)
 
