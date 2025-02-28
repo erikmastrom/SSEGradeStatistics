@@ -28,16 +28,35 @@ def first_year(grades, years, course_dict):
 
     col1, col2, col3 = st.columns([1, 40, 1])
     with col2:
-        st.write("## First Period")
+        st.markdown("### First Period\n")
         chart(long_df(course_dict["Y1"]["P1"], grades, years), num_courses)
-        st.write("## Second Period")
+        st.markdown("### Second Period\n")
         chart(long_df(course_dict["Y1"]["P2"], grades, years), num_courses)
-        st.write("## Third Period")
+        st.markdown("### Third Period\n")
         chart(long_df(course_dict["Y1"]["P3"], grades, years), num_courses)
-        st.write("## Fourth Period")
+        st.markdown("### Fourth Period\n")
         chart(long_df(course_dict["Y1"]["P4"], grades, years), num_courses)
 
     line_chart(mandatory_courses, grades, years)
+
+
+def second_year(grades, years, course_dict):
+    # in order to display the table with all Y1 courses
+    mandatory_courses = course_dict["Y1"]["P1"].copy()  # init courses as first period
+    for i in range(2, 5):  # add period 2-4's courses to course list
+        mandatory_courses.extend(course_dict["Y1"]["P{}".format(i)])
+
+    num_courses = 3  # to determine how wide the stacked bar chart(s) should be (3 courses per period/chart)
+
+    table(grades, mandatory_courses, years, None)
+
+    col1, col2, col3 = st.columns([1, 40, 1])
+    with col2:
+        st.markdown("### First Period\n")
+        chart(long_df(course_dict["Y2"]["P1"], grades, years), num_courses)
+        st.markdown("### Second Period\n")
+        chart(long_df(course_dict["Y2"]["P2"], grades, years), num_courses)
+
 
 
 def specialization(grades, years, course_dict, specs):

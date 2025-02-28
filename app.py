@@ -4,7 +4,7 @@ import altair as alt
 import numpy as np
 import openpyxl
 from chart_data import chart, long_df
-from logic import first_year, thesis, specialization, course_select, table, filter_select
+from logic import first_year, second_year, thesis, specialization, course_select, table, filter_select
 from cache_and_update_functions import update_cache, update_prefill, clear_spec, selectable_courses, clear_thesis
 
 ##
@@ -40,6 +40,9 @@ course_dict = {
                   "BE671 Business Law I"],
            "P3": ["BE602 Data Analytics II", "BE201 Marketing", "BE671 Business Law II"],
            "P4": ["BE701 Innovation", "BE401 Finance I", "BE502 Economics II: Macroeconomics"]},
+
+    "Y2": {"P1": ["BE302 Accounting II: Analysing Performance", "BE402 Finance II", "BE102 Management II: Leadership"],
+           "P2": ["BE603 Data Analytics III", "BE802 Global Challenges II", "BE202 Strategy"]},
 
     "Spec": {"Accounting": ["BE352 Financial Reporting and Financial Markets",
                             "BE353 Performance Measurement and Business Control"],
@@ -121,29 +124,29 @@ with st.sidebar:
         st.error("Select at least one course")
 
     # SPECIALIZATION AND MANDATORY COURSES
-    st.write("### Select a year or specialization to automatically fill in the courses")
+    st.write("### Select a year or specialization to automatically fill in the mandatory courses")
     pre_select = st.selectbox(
-        "Select a year or specialization to automatically fill in the courses",
-        ("First Year", "Specializations"),
+        "Select a year or specialization to automatically fill in the mandatory courses",
+        ("First Year", "Second Year", "Specializations"),
         index=None,
         placeholder="Year or Specialization",
         label_visibility="collapsed",
         key="pre_select",
         disabled=True if st.session_state.level else False)  # ,on_change=freeze_courses
 
-    match pre_select:
-        case "First Year":
-            st.button("Clear selection", on_click=clear_spec)
-            st.session_state.flag = "first_year"
-        case "Specializations":
-            specs = st.multiselect(
-                "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"])
-            st.button("Clear specialization", on_click=clear_spec)
+    if pre_select != "Specializations":
+        st.button("Clear selection", on_click=clear_spec)
+        st.session_state.flag = pre_select
+    else:
+        specs = st.multiselect(
+            "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"])
+        st.button("Clear specialization", on_click=clear_spec)
 
-            if not specs:
-                st.error("Please select at least one specialization")
-            else:
-                st.session_state.flag = "specialization"
+        if not specs:
+            st.error("Please select at least one specialization")
+        else:
+            st.session_state.flag = "specialization"
+
 
     # THESIS
     st.write("## Statistics for BSc/MSc Thesis")
@@ -167,8 +170,10 @@ with st.sidebar:
 match st.session_state.flag:
     case "filter":
         filter_select(courses, grades, years)
-    case "first_year":
+    case "First Year":
         first_year(grades, years, course_dict)
+    case "Second Year":
+        second_year(grades, years, course_dict)
     case "specialization":
         specialization(grades, years, course_dict, specs)
     case "thesis":
