@@ -135,19 +135,21 @@ with st.sidebar:
         key="pre_select",
         disabled=True if st.session_state.level else False)  # ,on_change=freeze_courses
 
-    if pre_select != "Specializations":
-        st.button("Clear selection", on_click=clear_spec)
-        st.session_state.flag = pre_select
-    else:
-        specs = st.multiselect(
-            "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"])
-        st.button("Clear specialization", on_click=clear_spec)
+    match pre_select:
+        case None:
+            pass
+        case "Specializations":
+            specs = st.multiselect(
+                "Choose specializations to compare", ["Accounting", "Economics", "Finance", "Management", "Marketing"])
+            st.button("Clear specialization", on_click=clear_spec)
 
-        if not specs:
-            st.error("Please select at least one specialization")
-        else:
-            st.session_state.flag = "specialization"
-
+            if not specs:
+                st.error("Please select at least one specialization")
+            else:
+                st.session_state.flag = "specialization"
+        case _:
+            st.button("Clear selection", on_click=clear_spec)
+            st.session_state.flag = pre_select
 
     # THESIS
     st.write("## Statistics for BSc/MSc Thesis")

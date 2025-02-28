@@ -42,9 +42,8 @@ def first_year(grades, years, course_dict):
 
 def second_year(grades, years, course_dict):
     # in order to display the table with all Y1 courses
-    mandatory_courses = course_dict["Y1"]["P1"].copy()  # init courses as first period
-    for i in range(2, 5):  # add period 2-4's courses to course list
-        mandatory_courses.extend(course_dict["Y1"]["P{}".format(i)])
+    mandatory_courses = course_dict["Y2"]["P1"].copy()  # init courses as first period
+    mandatory_courses.extend(course_dict["Y2"]["P2"])
 
     num_courses = 3  # to determine how wide the stacked bar chart(s) should be (3 courses per period/chart)
 
