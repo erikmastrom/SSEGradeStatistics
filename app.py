@@ -7,6 +7,7 @@ from chart_data import chart, long_df
 from logic import first_year, second_year, thesis, specialization, course_select, table, filter_select
 from cache_and_update_functions import update_cache, update_prefill, clear_spec, selectable_courses, clear_thesis
 
+
 ##
 st.set_page_config(layout="wide")
 
@@ -180,5 +181,6 @@ match st.session_state.flag:
         thesis(subjects, grades, years)
     case _:
         course_select(courses, grades, years)
+
 
 ##
